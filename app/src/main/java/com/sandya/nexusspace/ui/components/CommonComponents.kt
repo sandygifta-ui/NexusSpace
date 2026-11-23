@@ -118,7 +118,14 @@ fun TrackCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 5.dp),
+            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .clickable {
+                // Tap card → buka Now Playing
+                if (track.preview.isNotBlank()) {
+                    MusicPlayerManager.playOrPause(track.id, track.preview, track)
+                    MusicPlayerManager.openNowPlaying()
+                }
+            },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isActive)

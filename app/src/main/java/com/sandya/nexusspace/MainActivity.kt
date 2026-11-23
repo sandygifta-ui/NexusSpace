@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ import com.sandya.nexusspace.ui.components.MiniPlayer
 import com.sandya.nexusspace.ui.navigation.NexusNavGraph
 import com.sandya.nexusspace.ui.navigation.Screen
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
+import com.sandya.nexusspace.ui.screen.NowPlayingScreen
 import com.sandya.nexusspace.ui.screen.SplashScreen
 import com.sandya.nexusspace.ui.theme.NexusSpaceTheme
 
@@ -51,12 +53,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val isDark by AppPreferences.isDarkTheme.collectAsState()
+            val showNowPlaying by MusicPlayerManager.showNowPlaying.collectAsState()
             NexusSpaceTheme(darkTheme = isDark) {
                 var showSplash by remember { mutableStateOf(true) }
                 if (showSplash) {
                     SplashScreen(onFinished = { showSplash = false })
                 } else {
-                    NexusSpaceApp()
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        NexusSpaceApp()
+                        if (showNowPlaying) {
+                            NowPlayingScreen(
+                                onDismiss = { MusicPlayerManager.closeNowPlaying() }
+                            )
+                        }
+                    }
                 }
             }
         }
