@@ -44,8 +44,12 @@ class GenreViewModel : ViewModel() {
                 .onSuccess { response ->
                     _genreState.value = GenreUiState(
                         isLoading = false,
-                        // Filter out genre "All" (id=0)
-                        genres = response.data.filter { it.id != 0L }
+                        genres = response.data.filter { genre ->
+                            genre.id != 0L && genre.name !in listOf(
+                                "Kids", "Audiobooks", "Podcasts",
+                                "Radio", "Talk", "Comedy", "Spoken Word"
+                            )
+                        }
                     )
                 }
                 .onFailure { error ->
