@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -97,6 +99,12 @@ fun NexusSpaceApp() {
             unselectedIcon = Icons.Outlined.FavoriteBorder
         ),
         BottomNavItem(
+            route = Screen.Genre.route,
+            labelRes = R.string.nav_genre,
+            selectedIcon = Icons.Filled.LibraryMusic,
+            unselectedIcon = Icons.Outlined.LibraryMusic
+        ),
+        BottomNavItem(
             route = Screen.Settings.route,
             labelRes = R.string.nav_settings,
             selectedIcon = Icons.Filled.Settings,
@@ -111,6 +119,7 @@ fun NexusSpaceApp() {
         Screen.Home.route,
         Screen.Search.route,
         Screen.Favorites.route,
+        Screen.Genre.route,
         Screen.Settings.route
     )
 

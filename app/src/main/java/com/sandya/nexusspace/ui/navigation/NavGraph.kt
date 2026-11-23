@@ -16,9 +16,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sandya.nexusspace.data.model.Genre
 import com.sandya.nexusspace.ui.screen.AlbumDetailScreen
 import com.sandya.nexusspace.ui.screen.ArtistDetailScreen
 import com.sandya.nexusspace.ui.screen.FavoritesScreen
+import com.sandya.nexusspace.ui.screen.GenreDetailScreen
+import com.sandya.nexusspace.ui.screen.GenreScreen
 import com.sandya.nexusspace.ui.screen.HomeScreen
 import com.sandya.nexusspace.ui.screen.SearchScreen
 import com.sandya.nexusspace.ui.screen.SettingsScreen
@@ -27,12 +30,17 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Search : Screen("search")
     object Favorites : Screen("favorites")
+    object Genre : Screen("genre")
     object Settings : Screen("settings")
     object ArtistDetail : Screen("artist/{artistId}") {
         fun createRoute(artistId: Long) = "artist/$artistId"
     }
     object AlbumDetail : Screen("album/{albumId}") {
         fun createRoute(albumId: Long) = "album/$albumId"
+    }
+    object GenreDetail : Screen("genre_detail/{genreId}/{genreName}/{genrePicture}") {
+        fun createRoute(genreId: Long, genreName: String, genrePicture: String) =
+            "genre_detail/$genreId/${genreName.replace("/", "-")}/${genrePicture.replace("/", "|")}"
     }
 }
 
@@ -123,11 +131,52 @@ fun NexusNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         }
 
         composable(
+            route = Screen.Genre.route,
+            enterTransition = { fadeInTransition() },
+            exitTransition = { fadeOutTransition() }
+        ) {
+            GenreScreen(
+                onGenreClick = { genre ->
+                    navController.navigate(
+                        Screen.GenreDetail.createRoute(
+                            genre.id,
+                            genre.name,
+                            genre.pictureMedium
+                        )
+                    )
+                }
+            )
+        }
+
+        composable(
             route = Screen.Settings.route,
             enterTransition = { fadeInTransition() },
             exitTransition = { fadeOutTransition() }
         ) {
             SettingsScreen()
+        }
+
+        composable(
+            route = Screen.GenreDetail.route,
+            arguments = listOf(
+                navArgument("genreId") { type = NavType.LongType },
+                navArgument("genreName") { type = NavType.StringType },
+                navArgument("genrePicture") { type = NavType.StringType }
+            ),
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) { backStackEntry ->
+            val genreId = backStackEntry.arguments?.getLong("genreId") ?: return@composable
+            val genreName = backStackEntry.arguments?.getString("genreName") ?: ""
+            val genrePicture = backStackEntry.arguments?.getString("genrePicture")?.replace("|", "/") ?: ""
+            val genre = Genre(id = genreId, name = genreName, pictureMedium = genrePicture)
+            GenreDetailScreen(
+                genre = genre,
+                onBack = { navController.popBackStack() },
+                onArtistClick = { navController.navigate(Screen.ArtistDetail.createRoute(it)) }
+            )
         }
 
         // ── Detail screens — slide transition ─────────────────────────────

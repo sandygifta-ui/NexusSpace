@@ -43,6 +43,7 @@
 
     <!-- Favorites -->
     <string name="nav_favorites">Favorit</string>
+    <string name="nav_genre">Genre</string>
     <string name="no_favorites">Belum ada favorit</string>
     <string name="no_favorites_hint">Tap ❤ pada lagu untuk menambahkan</string>
     <string name="favorites_count">%d lagu favorit</string>
