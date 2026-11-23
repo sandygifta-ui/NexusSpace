@@ -203,7 +203,7 @@ fun TrackCard(
                             else MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
                         )
                         .clickable {
-                            MusicPlayerManager.playOrPause(track.id, track.preview)
+                            MusicPlayerManager.playOrPause(track.id, track.preview, track)
                         },
                     contentAlignment = Alignment.Center
                 ) {

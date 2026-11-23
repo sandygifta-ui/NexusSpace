@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sandya.nexusspace.ui.AppPreferences
+import com.sandya.nexusspace.ui.components.MiniPlayer
 import com.sandya.nexusspace.ui.navigation.NexusNavGraph
 import com.sandya.nexusspace.ui.navigation.Screen
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
@@ -106,12 +108,15 @@ fun NexusSpaceApp() {
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
-                NexusBottomNavigation(
-                    navController = navController,
-                    items = bottomNavItems,
-                    currentRoute = currentRoute
-                )
+            Column {
+                MiniPlayer()
+                if (showBottomBar) {
+                    NexusBottomNavigation(
+                        navController = navController,
+                        items = bottomNavItems,
+                        currentRoute = currentRoute
+                    )
+                }
             }
         }
     ) { innerPadding ->
