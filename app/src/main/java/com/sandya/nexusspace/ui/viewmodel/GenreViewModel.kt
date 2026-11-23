@@ -75,7 +75,10 @@ class GenreViewModel : ViewModel() {
                     _detailState.value = GenreDetailUiState(
                         isLoading = false,
                         genre = genre,
-                        artists = response.data.take(20)
+                        artists = response.data
+                            .filter { it.picture.isNotBlank() || it.pictureMedium.isNotBlank() }
+                            .sortedByDescending { it.nbFan }
+                            .take(20)
                     )
                 }
                 .onFailure { error ->
