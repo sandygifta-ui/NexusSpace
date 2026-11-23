@@ -8,7 +8,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,9 +79,9 @@ fun SectionHeader(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 10.dp)
     )
 }
 
@@ -95,12 +96,14 @@ fun TrackCard(
     val currentTrackId by MusicPlayerManager.currentTrackId.collectAsState()
     val isPlaying by MusicPlayerManager.isPlaying.collectAsState()
     val isLoading by MusicPlayerManager.isLoading.collectAsState()
+    val favList by FavoritesManager.favorites.collectAsState()
 
-    val isThisTrackActive = currentTrackId == track.id
-    val isThisTrackPlaying = isThisTrackActive && isPlaying
-    val isThisTrackLoading = isThisTrackActive && isLoading
+    val isActive = currentTrackId == track.id
+    val isTrackPlaying = isActive && isPlaying
+    val isTrackLoading = isActive && isLoading
+    val isFavorite = favList.any { it.id == track.id }
 
-    // Animasi rotasi album art saat lagu diputar
+    // Rotating album art animation
     val infiniteTransition = rememberInfiniteTransition(label = "rotate")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -115,43 +118,61 @@ fun TrackCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(12.dp),
+            .padding(horizontal = 16.dp, vertical = 5.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isThisTrackActive)
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+            containerColor = if (isActive)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
             else
-                MaterialTheme.colorScheme.surfaceVariant
+                MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isThisTrackActive) 6.dp else 2.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isActive) 8.dp else 2.dp
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Index number
             if (index != null) {
                 Text(
-                    text = "$index",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isThisTrackActive) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = "%02d".format(index),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isActive) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.width(28.dp)
                 )
             }
 
-            // Album art — berputar saat diputar
-            AsyncImage(
-                model = track.album.coverMedium.ifBlank { track.album.cover },
-                contentDescription = track.title,
-                contentScale = ContentScale.Crop,
+            // Album art
+            Box(
                 modifier = Modifier
-                    .size(52.dp)
-                    .clip(if (isThisTrackPlaying) CircleShape else RoundedCornerShape(8.dp))
-                    .rotate(if (isThisTrackPlaying) rotation else 0f)
-            )
+                    .size(56.dp)
+                    .clip(if (isTrackPlaying) CircleShape else RoundedCornerShape(10.dp))
+            ) {
+                AsyncImage(
+                    model = track.album.coverMedium.ifBlank { track.album.cover },
+                    contentDescription = track.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .rotate(if (isTrackPlaying) rotation else 0f)
+                )
+                // Overlay shimmer saat aktif
+                if (isActive) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            )
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -160,47 +181,44 @@ fun TrackCard(
                     text = track.title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
-                    color = if (isThisTrackActive) MaterialTheme.colorScheme.primary
+                    color = if (isActive) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = track.artist.name,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Spacer(modifier = Modifier.width(4.dp))
-
-            // Tombol Favorit
-            val isFav by FavoritesManager.favorites.collectAsState()
-            val isFavorite = isFav.any { it.id == track.id }
+            // Favorite button
             IconButton(
                 onClick = { FavoritesManager.toggleFavorite(track) },
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (isFavorite) Icons.Default.Favorite
+                                  else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
-                    tint = if (isFavorite) androidx.compose.ui.graphics.Color(0xFFE53935)
-                           else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
+                    tint = if (isFavorite) Color(0xFFE53935)
+                           else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                    modifier = Modifier.size(18.dp)
                 )
             }
 
-            // Tombol Play/Pause
+            // Play/Pause button
             if (track.preview.isNotBlank()) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(42.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isThisTrackActive) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            if (isActive) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                         )
                         .clickable {
                             MusicPlayerManager.playOrPause(track.id, track.preview, track)
@@ -208,12 +226,13 @@ fun TrackCard(
                     contentAlignment = Alignment.Center
                 ) {
                     when {
-                        isThisTrackLoading -> CircularProgressIndicator(
+                        isTrackLoading -> CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = if (isActive) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.primary,
                             strokeWidth = 2.dp
                         )
-                        isThisTrackPlaying -> Icon(
+                        isTrackPlaying -> Icon(
                             imageVector = Icons.Default.Pause,
                             contentDescription = "Pause",
                             tint = MaterialTheme.colorScheme.onPrimary,
@@ -222,17 +241,12 @@ fun TrackCard(
                         else -> Icon(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = "Play",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = if (isActive) MaterialTheme.colorScheme.onPrimary
+                                   else MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 }
-            } else {
-                Text(
-                    text = formatDuration(track.duration),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -248,40 +262,54 @@ fun ArtistCard(
 ) {
     Card(
         modifier = modifier
-            .width(140.dp)
+            .width(130.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(12.dp)
         ) {
-            AsyncImage(
-                model = artist.pictureMedium.ifBlank { artist.picture },
-                contentDescription = artist.name,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(90.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-            )
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                            )
+                        )
+                    )
+            ) {
+                AsyncImage(
+                    model = artist.pictureMedium.ifBlank { artist.picture },
+                    contentDescription = artist.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(CircleShape)
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = artist.name,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = "Artist",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
             )
         }
     }
@@ -297,41 +325,57 @@ fun AlbumCard(
 ) {
     Card(
         modifier = modifier
-            .width(150.dp)
+            .width(155.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(bottom = 10.dp)) {
-            AsyncImage(
-                model = album.coverMedium.ifBlank { album.cover },
-                contentDescription = album.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = album.title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-            Text(
-                text = album.artist?.name ?: "",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
+        Column {
+            Box(modifier = Modifier.size(155.dp)) {
+                AsyncImage(
+                    model = album.coverMedium.ifBlank { album.cover },
+                    contentDescription = album.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(155.dp)
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                )
+                // Bottom gradient on image
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.3f)
+                                )
+                            ),
+                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                )
+            }
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    text = album.title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = album.artist?.name ?: "",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
