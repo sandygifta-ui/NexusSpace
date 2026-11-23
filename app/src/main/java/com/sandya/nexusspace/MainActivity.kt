@@ -32,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.sandya.nexusspace.ui.AppPreferences
 import com.sandya.nexusspace.ui.navigation.NexusNavGraph
 import com.sandya.nexusspace.ui.navigation.Screen
+import com.sandya.nexusspace.ui.player.MusicPlayerManager
 import com.sandya.nexusspace.ui.theme.NexusSpaceTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,6 +45,11 @@ class MainActivity : ComponentActivity() {
                 NexusSpaceApp()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MusicPlayerManager.release()
     }
 }
 
