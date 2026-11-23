@@ -361,4 +361,8 @@ fun setLocale(context: Context, language: String) {
             LocaleListCompat.forLanguageTags(language)
         )
     }
+    // Restart activity agar string resources langsung update
+    if (context is android.app.Activity) {
+        context.recreate()
+    }
 }

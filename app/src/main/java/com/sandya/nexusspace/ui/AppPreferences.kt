@@ -9,7 +9,7 @@ object AppPreferences {
     private val _isDarkTheme = MutableStateFlow(false)
     val isDarkTheme: StateFlow<Boolean> = _isDarkTheme.asStateFlow()
 
-    private val _language = MutableStateFlow("en")
+    private val _language = MutableStateFlow("in")
     val language: StateFlow<String> = _language.asStateFlow()
 
     fun setDarkTheme(enabled: Boolean) {
