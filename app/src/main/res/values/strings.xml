@@ -37,4 +37,10 @@
     <string name="dark_mode_on">Tema gelap aktif</string>
     <string name="dark_mode_off">Tema terang aktif</string>
     <string name="language">Bahasa</string>
+
+    <!-- Favorites -->
+    <string name="nav_favorites">Favorit</string>
+    <string name="no_favorites">Belum ada favorit</string>
+    <string name="no_favorites_hint">Tap ❤ pada lagu untuk menambahkan</string>
+    <string name="favorites_count">%d lagu favorit</string>
 </resources>

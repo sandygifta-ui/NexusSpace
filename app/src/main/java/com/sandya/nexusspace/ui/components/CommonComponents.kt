@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -46,6 +48,7 @@ import coil.compose.AsyncImage
 import com.sandya.nexusspace.data.model.Album
 import com.sandya.nexusspace.data.model.Artist
 import com.sandya.nexusspace.data.model.Track
+import com.sandya.nexusspace.ui.favorites.FavoritesManager
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
 
 // ── Loading / Error ────────────────────────────────────────────────────────
@@ -172,6 +175,22 @@ fun TrackCard(
             }
 
             Spacer(modifier = Modifier.width(4.dp))
+
+            // Tombol Favorit
+            val isFav by FavoritesManager.favorites.collectAsState()
+            val isFavorite = isFav.any { it.id == track.id }
+            IconButton(
+                onClick = { FavoritesManager.toggleFavorite(track) },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Favorite",
+                    tint = if (isFavorite) androidx.compose.ui.graphics.Color(0xFFE53935)
+                           else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
 
             // Tombol Play/Pause
             if (track.preview.isNotBlank()) {

@@ -7,9 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
@@ -78,6 +80,12 @@ fun NexusSpaceApp() {
             unselectedIcon = Icons.Outlined.Search
         ),
         BottomNavItem(
+            route = Screen.Favorites.route,
+            labelRes = R.string.nav_favorites,
+            selectedIcon = Icons.Filled.Favorite,
+            unselectedIcon = Icons.Outlined.FavoriteBorder
+        ),
+        BottomNavItem(
             route = Screen.Settings.route,
             labelRes = R.string.nav_settings,
             selectedIcon = Icons.Filled.Settings,
@@ -92,6 +100,7 @@ fun NexusSpaceApp() {
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.Search.route,
+        Screen.Favorites.route,
         Screen.Settings.route
     )
 
