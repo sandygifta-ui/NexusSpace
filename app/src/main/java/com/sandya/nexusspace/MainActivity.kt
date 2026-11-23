@@ -185,7 +185,13 @@ fun NexusBottomNavigation(
                         contentDescription = stringResource(item.labelRes)
                     )
                 },
-                label = { Text(stringResource(item.labelRes)) },
+                label = {
+                    Text(
+                        text = stringResource(item.labelRes),
+                        maxLines = 1,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,

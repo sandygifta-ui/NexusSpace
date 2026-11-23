@@ -118,29 +118,28 @@ fun TrackCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .padding(horizontal = 12.dp, vertical = 3.dp)
             .clickable {
-                // Tap card → buka Now Playing
                 if (track.preview.isNotBlank()) {
                     MusicPlayerManager.playOrPause(track.id, track.preview, track)
                     MusicPlayerManager.openNowPlaying()
                 }
             },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isActive)
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
             else
                 MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isActive) 8.dp else 2.dp
+            defaultElevation = if (isActive) 6.dp else 1.dp
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Index number
@@ -151,42 +150,39 @@ fun TrackCard(
                     color = if (isActive) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(28.dp)
+                    modifier = Modifier.width(26.dp)
                 )
             }
 
             // Album art
             Box(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(if (isTrackPlaying) CircleShape else RoundedCornerShape(10.dp))
+                    .size(48.dp)
+                    .clip(if (isTrackPlaying) CircleShape else RoundedCornerShape(8.dp))
             ) {
                 AsyncImage(
                     model = track.album.coverMedium.ifBlank { track.album.cover },
                     contentDescription = track.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(48.dp)
                         .rotate(if (isTrackPlaying) rotation else 0f)
                 )
-                // Overlay shimmer saat aktif
                 if (isActive) {
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .background(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                            )
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = track.title,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = if (isActive) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurface,

@@ -43,6 +43,7 @@ data class Album(
     @SerializedName("title") val title: String = "",
     @SerializedName("cover") val cover: String = "",
     @SerializedName("cover_medium") val coverMedium: String = "",
+    @SerializedName("cover_big") val coverBig: String = "",
     @SerializedName("cover_xl") val coverXl: String = "",
     @SerializedName("artist") val artist: Artist? = null,
     @SerializedName("tracks") val tracks: TrackListResponse? = null

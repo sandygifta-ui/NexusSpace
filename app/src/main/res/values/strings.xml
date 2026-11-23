@@ -8,7 +8,7 @@
     <!-- Navigation -->
     <string name="nav_home">Beranda</string>
     <string name="nav_search">Cari</string>
-    <string name="nav_settings">Pengaturan</string>
+    <string name="nav_settings">Setting</string>
 
     <!-- Home -->
     <string name="trending_tracks">Lagu Trending</string>
