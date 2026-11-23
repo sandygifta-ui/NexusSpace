@@ -70,8 +70,11 @@ dependencies {
     // AppCompat (for locale/language switching)
     implementation(libs.androidx.appcompat)
 
-    // Material Icons Extended (DarkMode, LightMode, Language, MusicNote, etc.)
+    // Material Icons Extended
     implementation(libs.androidx.material.icons.extended)
+
+    // Shimmer loading effect
+    implementation(libs.compose.shimmer)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

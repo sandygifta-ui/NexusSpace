@@ -42,6 +42,7 @@ import com.sandya.nexusspace.ui.components.AlbumCard
 import com.sandya.nexusspace.ui.components.ArtistCard
 import com.sandya.nexusspace.ui.components.ErrorMessage
 import com.sandya.nexusspace.ui.components.LoadingIndicator
+import com.sandya.nexusspace.ui.components.HomeShimmer
 import com.sandya.nexusspace.ui.components.SectionHeader
 import com.sandya.nexusspace.ui.components.TrackCard
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
@@ -82,7 +83,7 @@ fun HomeScreen(
 
         when {
             uiState.isLoading && uiState.trendingTracks.isEmpty() -> {
-                LoadingIndicator(modifier = Modifier.fillMaxSize())
+                HomeShimmer()
             }
             uiState.error != null && uiState.trendingTracks.isEmpty() -> {
                 ErrorMessage(message = uiState.error!!, modifier = Modifier.fillMaxSize())
