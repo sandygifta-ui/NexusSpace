@@ -23,6 +23,7 @@
     <string name="search">Search</string>
     <string name="search_placeholder">Search songs, artists, or albums…</string>
     <string name="search_hint">Type to search music</string>
+    <string name="search_hint_sub">Search your favorite songs, artists, or albums</string>
     <string name="no_results">No results found</string>
     <string name="results_count">%d results found</string>
     <string name="clear">Clear</string>

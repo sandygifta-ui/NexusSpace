@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -32,7 +30,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -84,11 +81,12 @@ fun HomeScreen(
         )
 
         when {
-            uiState.isLoading -> LoadingIndicator(modifier = Modifier.fillMaxSize())
-            uiState.error != null -> ErrorMessage(
-                message = uiState.error!!,
-                modifier = Modifier.fillMaxSize()
-            )
+            uiState.isLoading && uiState.trendingTracks.isEmpty() -> {
+                LoadingIndicator(modifier = Modifier.fillMaxSize())
+            }
+            uiState.error != null && uiState.trendingTracks.isEmpty() -> {
+                ErrorMessage(message = uiState.error!!, modifier = Modifier.fillMaxSize())
+            }
             else -> {
                 Column(
                     modifier = Modifier
@@ -97,21 +95,18 @@ fun HomeScreen(
                 ) {
                     // ── Hero Banner ────────────────────────────────────────
                     if (uiState.trendingTracks.isNotEmpty()) {
-                        val featuredTrack = uiState.trendingTracks.first()
+                        val featured = uiState.trendingTracks.first()
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(220.dp)
+                                .height(230.dp)
                         ) {
                             AsyncImage(
-                                model = featuredTrack.album.coverXl.ifBlank {
-                                    featuredTrack.album.coverMedium
-                                },
-                                contentDescription = featuredTrack.title,
+                                model = featured.album.coverXl.ifBlank { featured.album.coverMedium },
+                                contentDescription = featured.title,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
-                            // Gradient overlay
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -125,7 +120,6 @@ fun HomeScreen(
                                         )
                                     )
                             )
-                            // Text overlay
                             Column(
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
@@ -133,29 +127,28 @@ fun HomeScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.featured_track),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
+                                    fontWeight = FontWeight.ExtraBold
                                 )
                                 Text(
-                                    text = featuredTrack.title,
+                                    text = featured.title,
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                                 Text(
-                                    text = featuredTrack.artist.name,
+                                    text = featured.artist.name,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Button(
                                     onClick = {
                                         MusicPlayerManager.playOrPause(
-                                            featuredTrack.id,
-                                            featuredTrack.preview,
-                                            featuredTrack
+                                            featured.id,
+                                            featured.preview,
+                                            featured
                                         )
                                     },
                                     colors = ButtonDefaults.buttonColors(

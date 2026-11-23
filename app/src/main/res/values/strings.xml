@@ -22,6 +22,7 @@
     <string name="search">Cari</string>
     <string name="search_placeholder">Cari lagu, artis, atau album…</string>
     <string name="search_hint">Ketik untuk mencari musik</string>
+    <string name="search_hint_sub">Cari lagu, artis, atau album favoritmu</string>
     <string name="no_results">Tidak ada hasil ditemukan</string>
     <string name="results_count">%d hasil ditemukan</string>
     <string name="clear">Hapus</string>
