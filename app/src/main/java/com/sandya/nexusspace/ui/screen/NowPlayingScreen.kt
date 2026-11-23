@@ -17,9 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -29,10 +27,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -45,9 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -60,24 +54,18 @@ import com.sandya.nexusspace.ui.favorites.FavoritesManager
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
 import com.sandya.nexusspace.ui.theme.NexusGreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NowPlayingScreen(
-    onDismiss: () -> Unit
-) {
+fun NowPlayingScreen(onDismiss: () -> Unit) {
     val track by MusicPlayerManager.currentTrack.collectAsState()
     val isPlaying by MusicPlayerManager.isPlaying.collectAsState()
     val isLoading by MusicPlayerManager.isLoading.collectAsState()
     val progress by MusicPlayerManager.progress.collectAsState()
     val elapsed by MusicPlayerManager.elapsedSeconds.collectAsState()
     val total by MusicPlayerManager.totalSeconds.collectAsState()
-    val hasNext by MusicPlayerManager.queue.collectAsState()
-    val queueIndex by MusicPlayerManager.queueIndex.collectAsState()
     val favList by FavoritesManager.favorites.collectAsState()
-
     val isFavorite = track?.let { t -> favList.any { it.id == t.id } } ?: false
 
-    // Rotating album art animation
+    // Rotating animation
     val infiniteTransition = rememberInfiniteTransition(label = "rotate")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -90,28 +78,21 @@ fun NowPlayingScreen(
     )
 
     track?.let { t ->
+        // Full opaque background — tidak transparan
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.background,
-                            NexusGreen.copy(alpha = 0.08f)
-                        )
-                    )
-                )
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 28.dp),
+                    .padding(horizontal = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Top bar ────────────────────────────────────────────────
+                // ── Top Bar ────────────────────────────────────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -120,8 +101,8 @@ fun NowPlayingScreen(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Close",
-                            modifier = Modifier.size(32.dp),
+                            contentDescription = "Tutup",
+                            modifier = Modifier.size(34.dp),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -130,17 +111,15 @@ fun NowPlayingScreen(
                             text = "SEDANG DIPUTAR",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.ExtraBold,
                             letterSpacing = 2.sp
                         )
                     }
-                    IconButton(onClick = {
-                        track?.let { FavoritesManager.toggleFavorite(it) }
-                    }) {
+                    IconButton(onClick = { FavoritesManager.toggleFavorite(t) }) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Favorite
                                           else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
+                            contentDescription = "Favorit",
                             tint = if (isFavorite) Color(0xFFE53935)
                                    else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(26.dp)
@@ -148,19 +127,20 @@ fun NowPlayingScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(40.dp))
 
-                // ── Album Art ──────────────────────────────────────────────
+                // ── Album Art (Vinyl) ──────────────────────────────────────
                 Box(
                     modifier = Modifier
-                        .size(280.dp)
+                        .size(260.dp)
                         .shadow(
-                            elevation = 24.dp,
+                            elevation = 20.dp,
                             shape = CircleShape,
-                            ambientColor = NexusGreen.copy(alpha = 0.4f),
-                            spotColor = NexusGreen.copy(alpha = 0.4f)
+                            ambientColor = NexusGreen.copy(alpha = 0.3f),
+                            spotColor = NexusGreen.copy(alpha = 0.5f)
                         )
                         .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     AsyncImage(
                         model = t.album.coverXl.ifBlank { t.album.coverMedium },
@@ -170,17 +150,17 @@ fun NowPlayingScreen(
                             .fillMaxSize()
                             .rotate(if (isPlaying) rotation else 0f)
                     )
-                    // Center hole (vinyl effect)
+                    // Vinyl hole
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(28.dp)
                             .align(Alignment.Center)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.background)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(36.dp))
 
                 // ── Track Info ─────────────────────────────────────────────
                 Text(
@@ -197,7 +177,7 @@ fun NowPlayingScreen(
                     text = t.artist.name,
                     style = MaterialTheme.typography.bodyLarge,
                     color = NexusGreen,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -229,7 +209,7 @@ fun NowPlayingScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 // ── Controls ───────────────────────────────────────────────
                 Row(
@@ -237,23 +217,22 @@ fun NowPlayingScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Skip Previous
+                    // Previous
                     IconButton(
                         onClick = { MusicPlayerManager.skipPrevious() },
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier.size(60.dp)
                     ) {
                         Icon(
                             Icons.Default.SkipPrevious,
-                            contentDescription = "Previous",
-                            modifier = Modifier.size(38.dp),
+                            contentDescription = "Sebelumnya",
+                            modifier = Modifier.size(42.dp),
                             tint = if (MusicPlayerManager.hasPrevious())
                                 MaterialTheme.colorScheme.onBackground
-                            else
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                         )
                     }
 
-                    // Play/Pause button
+                    // Play/Pause
                     Box(
                         modifier = Modifier
                             .size(72.dp)
@@ -268,9 +247,7 @@ fun NowPlayingScreen(
                                 strokeWidth = 3.dp
                             )
                             isPlaying -> IconButton(
-                                onClick = {
-                                    MusicPlayerManager.playOrPause(t.id, t.preview, t)
-                                }
+                                onClick = { MusicPlayerManager.playOrPause(t.id, t.preview, t) }
                             ) {
                                 Icon(
                                     Icons.Default.Pause,
@@ -280,9 +257,7 @@ fun NowPlayingScreen(
                                 )
                             }
                             else -> IconButton(
-                                onClick = {
-                                    MusicPlayerManager.playOrPause(t.id, t.preview, t)
-                                }
+                                onClick = { MusicPlayerManager.playOrPause(t.id, t.preview, t) }
                             ) {
                                 Icon(
                                     Icons.Default.PlayArrow,
@@ -294,30 +269,28 @@ fun NowPlayingScreen(
                         }
                     }
 
-                    // Skip Next
+                    // Next
                     IconButton(
                         onClick = { MusicPlayerManager.skipNext() },
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier.size(60.dp)
                     ) {
                         Icon(
                             Icons.Default.SkipNext,
-                            contentDescription = "Next",
-                            modifier = Modifier.size(38.dp),
+                            contentDescription = "Berikutnya",
+                            modifier = Modifier.size(42.dp),
                             tint = if (MusicPlayerManager.hasNext())
                                 MaterialTheme.colorScheme.onBackground
-                            else
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Preview notice ─────────────────────────────────────────
                 Text(
                     text = "Preview 30 detik • Deezer API",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                 )
             }
         }
