@@ -1,6 +1,7 @@
 package com.sandya.nexusspace.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,10 +26,11 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun NexusNavGraph(navController: NavHostController) {
+fun NexusNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Home.route,
+        modifier = modifier
     ) {
         composable(Screen.Home.route) {
             HomeScreen(

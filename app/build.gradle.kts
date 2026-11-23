@@ -70,6 +70,9 @@ dependencies {
     // AppCompat (for locale/language switching)
     implementation(libs.androidx.appcompat)
 
+    // Material Icons Extended (DarkMode, LightMode, Language, MusicNote, etc.)
+    implementation(libs.androidx.material.icons.extended)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
