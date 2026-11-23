@@ -1,5 +1,6 @@
 package com.sandya.nexusspace.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,10 +11,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,11 +30,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.sandya.nexusspace.R
 import com.sandya.nexusspace.ui.components.AlbumCard
 import com.sandya.nexusspace.ui.components.ArtistCard
@@ -36,6 +47,7 @@ import com.sandya.nexusspace.ui.components.ErrorMessage
 import com.sandya.nexusspace.ui.components.LoadingIndicator
 import com.sandya.nexusspace.ui.components.SectionHeader
 import com.sandya.nexusspace.ui.components.TrackCard
+import com.sandya.nexusspace.ui.player.MusicPlayerManager
 import com.sandya.nexusspace.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +65,7 @@ fun HomeScreen(
                 Text(
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary
                 )
             },
@@ -83,9 +95,85 @@ fun HomeScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
+                    // ── Hero Banner ────────────────────────────────────────
+                    if (uiState.trendingTracks.isNotEmpty()) {
+                        val featuredTrack = uiState.trendingTracks.first()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                        ) {
+                            AsyncImage(
+                                model = featuredTrack.album.coverXl.ifBlank {
+                                    featuredTrack.album.coverMedium
+                                },
+                                contentDescription = featuredTrack.title,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            // Gradient overlay
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                MaterialTheme.colorScheme.background.copy(alpha = 0.1f),
+                                                MaterialTheme.colorScheme.background.copy(alpha = 0.85f),
+                                                MaterialTheme.colorScheme.background
+                                            )
+                                        )
+                                    )
+                            )
+                            // Text overlay
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.featured_track),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
+                                )
+                                Text(
+                                    text = featuredTrack.title,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = featuredTrack.artist.name,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = {
+                                        MusicPlayerManager.playOrPause(
+                                            featuredTrack.id,
+                                            featuredTrack.preview,
+                                            featuredTrack
+                                        )
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                    shape = RoundedCornerShape(50)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.play_now),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     // ── Trending Tracks ────────────────────────────────────
                     SectionHeader(title = stringResource(R.string.trending_tracks))
-
                     uiState.trendingTracks.forEachIndexed { index, track ->
                         TrackCard(track = track, index = index + 1)
                     }
@@ -94,7 +182,6 @@ fun HomeScreen(
 
                     // ── Popular Albums ─────────────────────────────────────
                     SectionHeader(title = stringResource(R.string.popular_albums))
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -103,10 +190,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         uiState.trendingAlbums.forEach { album ->
-                            AlbumCard(
-                                album = album,
-                                onClick = { onAlbumClick(album.id) }
-                            )
+                            AlbumCard(album = album, onClick = { onAlbumClick(album.id) })
                         }
                     }
 
@@ -114,7 +198,6 @@ fun HomeScreen(
 
                     // ── Top Artists ────────────────────────────────────────
                     SectionHeader(title = stringResource(R.string.top_artists))
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -123,14 +206,11 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         uiState.trendingArtists.forEach { artist ->
-                            ArtistCard(
-                                artist = artist,
-                                onClick = { onArtistClick(artist.id) }
-                            )
+                            ArtistCard(artist = artist, onClick = { onArtistClick(artist.id) })
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(80.dp))
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
             }
         }

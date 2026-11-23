@@ -16,6 +16,8 @@
     <string name="popular_albums">Popular Albums</string>
     <string name="top_artists">Top Artists</string>
     <string name="refresh">Refresh</string>
+    <string name="featured_track">🔥 FEATURED</string>
+    <string name="play_now">▶  Play Now</string>
 
     <!-- Search -->
     <string name="search">Search</string>
