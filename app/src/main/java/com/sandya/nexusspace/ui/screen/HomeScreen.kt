@@ -157,11 +157,10 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Button(
                                     onClick = {
-                                        MusicPlayerManager.playOrPause(
-                                            featured.id,
-                                            featured.preview,
-                                            featured
+                                        MusicPlayerManager.setQueue(
+                                            uiState.trendingTracks, 0
                                         )
+                                        MusicPlayerManager.openNowPlaying()
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.primary
@@ -180,7 +179,11 @@ fun HomeScreen(
                     // ── Trending Tracks ────────────────────────────────────
                     SectionHeader(title = stringResource(R.string.trending_tracks))
                     uiState.trendingTracks.forEachIndexed { index, track ->
-                        TrackCard(track = track, index = index + 1)
+                        TrackCard(
+                            track = track,
+                            index = index + 1,
+                            queue = uiState.trendingTracks
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

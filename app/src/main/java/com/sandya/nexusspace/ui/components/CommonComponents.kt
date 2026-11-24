@@ -91,6 +91,7 @@ fun SectionHeader(title: String, modifier: Modifier = Modifier) {
 fun TrackCard(
     track: Track,
     index: Int? = null,
+    queue: List<Track> = emptyList(),
     modifier: Modifier = Modifier
 ) {
     val currentTrackId by MusicPlayerManager.currentTrackId.collectAsState()
@@ -121,7 +122,12 @@ fun TrackCard(
             .padding(horizontal = 12.dp, vertical = 3.dp)
             .clickable {
                 if (track.preview.isNotBlank()) {
-                    MusicPlayerManager.playOrPause(track.id, track.preview, track)
+                    if (queue.isNotEmpty()) {
+                        val idx = queue.indexOfFirst { it.id == track.id }
+                        MusicPlayerManager.setQueue(queue, if (idx >= 0) idx else 0)
+                    } else {
+                        MusicPlayerManager.playOrPause(track.id, track.preview, track)
+                    }
                     MusicPlayerManager.openNowPlaying()
                 }
             },
