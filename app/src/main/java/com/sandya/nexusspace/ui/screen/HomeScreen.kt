@@ -41,8 +41,9 @@ import com.sandya.nexusspace.R
 import com.sandya.nexusspace.ui.components.AlbumCard
 import com.sandya.nexusspace.ui.components.ArtistCard
 import com.sandya.nexusspace.ui.components.ErrorMessage
-import com.sandya.nexusspace.ui.components.LoadingIndicator
+import com.sandya.nexusspace.ui.components.NoConnectionScreen
 import com.sandya.nexusspace.ui.components.HomeShimmer
+import com.sandya.nexusspace.ui.components.GenericErrorScreen
 import com.sandya.nexusspace.ui.components.SectionHeader
 import com.sandya.nexusspace.ui.components.TrackCard
 import com.sandya.nexusspace.ui.player.MusicPlayerManager
@@ -86,7 +87,17 @@ fun HomeScreen(
                 HomeShimmer()
             }
             uiState.error != null && uiState.trendingTracks.isEmpty() -> {
-                ErrorMessage(message = uiState.error!!, modifier = Modifier.fillMaxSize())
+                val isNoConnection = uiState.error!!.contains("Unable to resolve") ||
+                    uiState.error!!.contains("timeout") ||
+                    uiState.error!!.contains("Failed to connect")
+                if (isNoConnection) {
+                    NoConnectionScreen(onRetry = { viewModel.loadChart() })
+                } else {
+                    GenericErrorScreen(
+                        message = uiState.error!!,
+                        onRetry = { viewModel.loadChart() }
+                    )
+                }
             }
             else -> {
                 Column(
