@@ -1,5 +1,3 @@
-# 🎵 NexusSpace
-
 # <p align="center">🎵 NexusSpace</p>
 
 <p align="center">
