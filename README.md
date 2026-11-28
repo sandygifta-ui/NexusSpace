@@ -1,100 +1,203 @@
 # 🎵 NexusSpace
 
-Aplikasi musik Android modern yang dibangun menggunakan **Jetpack Compose** dan **Deezer API**.
+# <p align="center">🎵 NexusSpace</p>
+
+<p align="center">
+  Aplikasi musik Android modern yang dibangun menggunakan
+  <strong>Kotlin</strong>, <strong>Jetpack Compose</strong>, dan <strong>Deezer API</strong>.
+</p>
 
 ---
 
 ## 📱 Fitur Utama
 
-- 🏠 **Halaman Beranda** — Menampilkan lagu trending, album populer, dan artis teratas dari Deezer Chart
-- 🔍 **Pencarian** — Cari lagu, artis, dan album secara real-time
-- 🎤 **Detail Artis** — Lihat profil artis beserta lagu-lagu terbaiknya
-- 💿 **Detail Album** — Tampilkan cover album dan daftar lagu lengkap
-- 🌙 **Dark / Light Mode** — Bisa beralih tema dari halaman Pengaturan
-- 🌐 **Multi Bahasa** — Mendukung Bahasa Indonesia dan English
-- 📐 **Rotasi Layar** — UI tetap stabil dan bisa di-scroll saat layar diputar
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android-green?logo=android" alt="Platform Android"/>
+  <img src="https://img.shields.io/badge/Language-Kotlin-purple?logo=kotlin" alt="Kotlin"/>
+  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-blue" alt="Jetpack Compose"/>
+  <img src="https://img.shields.io/badge/API-Deezer-orange" alt="Deezer API"/>
+</p>
+
+---
+
+## 📖 Tentang Project
+
+**NexusSpace** adalah aplikasi musik berbasis Android yang memungkinkan pengguna menjelajahi berbagai lagu, album, dan artis melalui Deezer API.
+
+Aplikasi ini dikembangkan dengan antarmuka modern menggunakan Jetpack Compose, navigasi yang intuitif, serta dukungan tema gelap dan terang untuk memberikan pengalaman penggunaan yang nyaman.
+
+NexusSpace dibuat sebagai project tugas sekolah sekaligus penerapan pembelajaran pengembangan aplikasi mobile menggunakan Kotlin.
+
+---
+
+## 📱 Fitur Utama
+
+- 🏠 **Halaman Beranda** — Menampilkan lagu trending, album populer, dan artis teratas dari Deezer Chart.
+- 🔍 **Pencarian Musik** — Mencari lagu, artis, dan album secara real-time.
+- 🎤 **Detail Artis** — Menampilkan profil artis beserta lagu-lagu terbaiknya.
+- 💿 **Detail Album** — Menampilkan cover album dan daftar lagu lengkap.
+- 🎧 **Music Preview** — Memutar preview musik dengan kontrol play dan pause.
+- 🌙 **Dark / Light Mode** — Mengubah tema aplikasi melalui halaman Pengaturan.
+- 🌐 **Multi Bahasa** — Mendukung Bahasa Indonesia dan English.
+- 📐 **Rotasi Layar** — Antarmuka tetap stabil dan dapat di-scroll saat layar diputar.
+- ✨ **Shimmer Loading** — Efek loading modern untuk meningkatkan pengalaman pengguna.
 
 ---
 
 ## 🛠️ Tech Stack
 
 | Teknologi | Kegunaan |
-|-----------|----------|
-| Jetpack Compose | UI Toolkit Modern Android |
-| Navigation Compose | Navigasi antar halaman |
-| Retrofit + Gson | HTTP Client & JSON Parser |
-| OkHttp | HTTP logging & networking |
+|---|---|
+| Kotlin | Bahasa pemrograman utama |
+| Jetpack Compose | Toolkit UI modern untuk Android |
+| Navigation Compose | Navigasi antarhalaman |
+| Retrofit | HTTP client untuk komunikasi API |
+| Gson | Parsing data JSON |
+| OkHttp | Networking dan HTTP logging |
 | Coil | Memuat gambar dari URL |
-| ViewModel + StateFlow | Manajemen state UI |
-| Deezer API | Sumber data musik (gratis, tanpa API key) |
-| AppCompat | Penggantian bahasa dinamis |
+| ViewModel | Mengelola state dan logika UI |
+| StateFlow | Mengelola perubahan state UI |
+| Deezer API | Sumber data musik |
+| AppCompat | Mendukung pengaturan bahasa dinamis |
 
 ---
 
 ## 🗂️ Struktur Project
 
-```
-app/src/main/java/com/sandya/nexusspace/
-├── data/
-│   ├── model/          # Data class (Track, Artist, Album, dll)
-│   ├── remote/         # Retrofit API service & instance
-│   └── repository/     # Repository layer
-├── ui/
-│   ├── components/     # Reusable UI components (TrackCard, ArtistCard, dll)
-│   ├── navigation/     # NavGraph & Screen routes
-│   ├── screen/         # HomeScreen, SearchScreen, ArtistDetailScreen, dll
-│   ├── theme/          # Color, Typography, Theme
-│   ├── viewmodel/      # HomeViewModel, SearchViewModel, DetailViewModel
-│   └── AppPreferences  # State holder dark mode & bahasa
-└── MainActivity.kt     # Entry point + Bottom Navigation
+```text
+NexusSpace/
+│
+├── app/
+│   └── src/
+│       └── main/
+│           └── java/
+│               └── com/sandya/nexusspace/
+│                   │
+│                   ├── data/
+│                   │   ├── model/
+│                   │   │   └── Data class
+│                   │   ├── remote/
+│                   │   │   └── API Service
+│                   │   └── repository/
+│                   │       └── Repository Layer
+│                   │
+│                   ├── ui/
+│                   │   ├── components/
+│                   │   │   └── Reusable UI Components
+│                   │   ├── navigation/
+│                   │   │   └── Navigation Graph
+│                   │   ├── screen/
+│                   │   │   └── Application Screens
+│                   │   ├── theme/
+│                   │   │   └── Color, Typography, Theme
+│                   │   ├── viewmodel/
+│                   │   │   └── ViewModel Classes
+│                   │   └── AppPreferences
+│                   │
+│                   └── MainActivity.kt
+│
+├── screenshots/
+│   ├── beranda gelap.jpg
+│   ├── beranda terang.jpg
+│   ├── detail artis.jpg
+│   └── pencarian.jpg
+│
+├── gradle/
+├── .gitignore
+├── build.gradle.kts
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle.kts
+└── README.md
 ```
 
 ---
 
-## 🌐 API
+## 🌐 Deezer API
 
-Aplikasi ini menggunakan **[Deezer API](https://developers.deezer.com/api)** yang gratis dan tidak memerlukan API key.
+NexusSpace menggunakan **[Deezer API](https://developers.deezer.com/api)** sebagai sumber data musik.
 
-Endpoint yang digunakan:
-- `GET /chart` — Data trending (lagu, album, artis)
-- `GET /search?q={query}` — Pencarian lagu
-- `GET /artist/{id}` — Detail artis
-- `GET /artist/{id}/top` — Lagu terpopuler artis
-- `GET /album/{id}` — Detail album beserta tracklist
+API digunakan untuk mengambil informasi lagu, artis, album, dan hasil pencarian.
+
+### Endpoint yang Digunakan
+
+| Endpoint | Fungsi |
+|---|---|
+| `GET /chart` | Mengambil data trending lagu, album, dan artis |
+| `GET /search?q={query}` | Mencari lagu berdasarkan kata kunci |
+| `GET /artist/{id}` | Mengambil detail artis |
+| `GET /artist/{id}/top` | Mengambil lagu terpopuler dari artis |
+| `GET /album/{id}` | Mengambil detail album beserta tracklist |
+
+> Deezer API digunakan sebagai sumber data musik. Endpoint yang tersedia mengikuti layanan Deezer yang digunakan dalam project.
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🚀 Cara Menjalankan Aplikasi
 
-1. Clone repo ini:
+### Prasyarat
+
+Pastikan perangkat atau komputer sudah memiliki:
+
+- Android Studio
+- JDK yang sesuai dengan konfigurasi project
+- Android SDK
+- Emulator Android atau perangkat Android fisik
+- Minimum Android 7.0 (API Level 24)
+
+### Instalasi
+
+1. Clone repository:
+
    ```bash
    git clone https://github.com/sandygifta-ui/NexusSpace.git
    ```
-2. Buka dengan **Android Studio**
-3. Tunggu Gradle sync selesai
-4. Jalankan di emulator atau device (min. Android 7.0 / API 24)
 
-> Tidak memerlukan API key — langsung bisa dijalankan!
+2. Buka folder project menggunakan Android Studio.
+
+3. Tunggu hingga proses **Gradle Sync** selesai.
+
+4. Hubungkan perangkat Android atau jalankan emulator.
+
+5. Klik tombol **Run ▶** untuk menjalankan aplikasi.
+
+> Tidak memerlukan API key untuk konfigurasi Deezer API yang digunakan dalam project ini.
 
 ---
 
-## 📸 Tampilan Aplikasi
+## 📸 Screenshot Aplikasi
 
-| Beranda (Light) | Beranda (Dark) | Pencarian | Detail Artis |
-|:-:|:-:|:-:|:-:|
-| *(screenshot)* | *(screenshot)* | *(screenshot)* | *(screenshot)* |
+### 🏠 Halaman Beranda
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Beranda Light Mode](screenshots/beranda%20terang.jpg) | ![Beranda Dark Mode](screenshots/beranda%20gelap.jpg) |
+
+### 🔍 Pencarian Musik & 🎤 Detail Artis
+
+| Pencarian Musik | Detail Artis |
+|---|---|
+| ![Halaman Pencarian](screenshots/pencarian.jpg) | ![Detail Artis](screenshots/detail%20artis.jpg) |
 
 ---
 
 ## 👨‍💻 Developer
 
-**Sandya Gifta**  
-XII RPL — Tugas Projek Mobile  
-November – Desember 2026
+<p align="center">
+  <strong>Sandya Gifta</strong>
+  <br/>
+  XII RPL — Tugas Projek Mobile
+  <br/>
+  November – Desember 2026
+</p>
 
 ---
 
 ## 📄 Lisensi
 
-Project ini dibuat untuk keperluan tugas sekolah.  
-Data musik disediakan oleh [Deezer](https://www.deezer.com).
+Project ini dikembangkan untuk keperluan tugas sekolah dan pembelajaran pengembangan aplikasi Android.
+
+Data musik dan informasi terkait disediakan oleh [Deezer](https://www.deezer.com).
+
+NexusSpace merupakan project independen dan tidak berafiliasi secara resmi dengan Deezer.
